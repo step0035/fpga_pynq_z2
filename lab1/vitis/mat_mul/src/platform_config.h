@@ -1,0 +1,9 @@
+#ifndef __PLATFORM_CONFIG_H_
+#define __PLATFORM_CONFIG_H_
+
+#define STDOUT_IS_PS7_UART
+#define UART_DEVICE_ID 0
+#endif
+
+#define TMRCTR_DEVICE_ID	XPAR_TMRCTR_0_DEVICE_ID
+#define TIMER_COUNTER_0	 0

@@ -1,0 +1,45 @@
+19:08:32 **** Incremental Build of configuration Debug for project mat_mul ****
+make all 
+make --no-print-directory pre-build
+a9-linaro-pre-build-step
+ 
+make --no-print-directory main-build
+Building file: ../src/main.c
+Invoking: ARM v7 gcc compiler
+arm-none-eabi-gcc -Wall -O0 -g3 -c -fmessage-length=0 -MT"src/main.o" -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -I/home/stephen/dev/fpga/pynq-z2/lab1/vitis/design_1_wrapper/export/design_1_wrapper/sw/design_1_wrapper/standalone_ps7_cortexa9_0/bspinclude/include -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+../src/main.c: In function 'main':
+../src/main.c:133:57: warning: pointer targets in passing argument 2 of 'XUartPs_Recv' differ in signedness [-Wpointer-sign]
+  133 |                 ReceivedCount += XUartPs_Recv(&Uart_PS, &a_csv[ReceivedCount], A_CSV_SIZE - ReceivedCount);
+      |                                                         ^~~~~~~~~~~~~~~~~~~~~
+      |                                                         |
+      |                                                         char *
+In file included from ../src/main.c:50:
+/home/stephen/dev/fpga/pynq-z2/lab1/vitis/design_1_wrapper/export/design_1_wrapper/sw/design_1_wrapper/standalone_ps7_cortexa9_0/bspinclude/include/xuartps.h:452:43: note: expected 'u8 *' {aka 'unsigned char *'} but argument is of type 'char *'
+  452 | u32 XUartPs_Recv(XUartPs *InstancePtr,u8 *BufferPtr,
+      |                                       ~~~~^~~~~~~~~
+../src/main.c:151:34: warning: implicit declaration of function 'atoi' [-Wimplicit-function-declaration]
+  151 |             matrix_a[row][col] = atoi(token2);
+      |                                  ^~~~
+../src/main.c:178:11: warning: pointer targets in assignment from 'u8 *' {aka 'unsigned char *'} to 'char *' differ in signedness [-Wpointer-sign]
+  178 |     rest1 = b_csv;
+      |           ^
+At top level:
+../src/main.c:63:11: warning: 'out_buf' defined but not used [-Wunused-variable]
+   63 | static u8 out_buf[2048]; // output buffer containing the string to send to serial, set to 64 for now
+      |           ^~~~~~~
+Finished building: ../src/main.c
+ 
+Building target: mat_mul.elf
+Invoking: ARM v7 gcc linker
+arm-none-eabi-gcc -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=none -specs=Xilinx.spec -Wl,-T -Wl,../src/lscript.ld -L/home/stephen/dev/fpga/pynq-z2/lab1/vitis/design_1_wrapper/export/design_1_wrapper/sw/design_1_wrapper/standalone_ps7_cortexa9_0/bsplib/lib -o "mat_mul.elf" ./src/main.o ./src/platform.o   -Wl,--start-group,-lxil,-lgcc,-lc,--end-group
+Finished building target: mat_mul.elf
+ 
+Invoking: ARM v7 Print Size
+arm-none-eabi-size mat_mul.elf  |tee "mat_mul.elf.size"
+   text	   data	    bss	    dec	    hex	filename
+  60867	   2612	  27744	  91223	  16457	mat_mul.elf
+Finished building: mat_mul.elf.size
+ 
+
+19:08:32 Build Finished (took 264ms)
+
