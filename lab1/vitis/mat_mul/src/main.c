@@ -60,7 +60,6 @@ static u8 b_csv[B_CSV_SIZE];	/* Buffer for Receiving Data */
 static u8 matrix_a[64][8];
 static u8 matrix_b[8];
 static u64 matrix_r[64];
-static u8 out_buf[2048]; // output buffer containing the string to send to serial, set to 64 for now
 
 u8 row;
 u8 col;
@@ -79,7 +78,7 @@ int main()
 	int end_time;
     int computation_time;
 
-    /* init uart start */
+    /* ===========================================init uart start=========================================== */
 	Config = XUartPs_LookupConfig(UART_DEVICE_ID);
 	if (NULL == Config) {
 		return XST_FAILURE;
@@ -104,9 +103,9 @@ int main()
 
     // set uart to normal mode
 	XUartPs_SetOperMode(&Uart_PS, XUARTPS_OPER_MODE_NORMAL);
-    /* init uart end */
+    /* ===========================================init uart end=========================================== */
 
-    /* init timer start */
+    /* ===========================================init timer start=========================================== */
 	Status = XTmrCtr_Initialize(TmrCtrInstancePtr, TMRCTR_DEVICE_ID);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
@@ -121,9 +120,9 @@ int main()
     // enable autoreload mode of timer counters
 	XTmrCtr_SetOptions(TmrCtrInstancePtr, TIMER_COUNTER_0,
 				XTC_AUTO_RELOAD_OPTION);
-    /* init timer end */
+    /* ===========================================init timer end=========================================== */
 
-    // TODO: we can send a message here or blink led to indicate ready to read csv files
+    /* ===========================================read and parse csv start=========================================== */
     printf("Send A.csv...\r\n");
 
     // in every poll, we read as many bytes as we can and empty the FIFO
@@ -132,12 +131,6 @@ int main()
     while(ReceivedCount < A_CSV_SIZE) {
 		ReceivedCount += XUartPs_Recv(&Uart_PS, &a_csv[ReceivedCount], A_CSV_SIZE - ReceivedCount);
     }
-
-    // for (size_t i=0; i<A_CSV_SIZE; i++)
-    // {
-    //     printf("char: %c\r\n", a_csv[i]);
-    //     printf("int: %d\r\n", a_csv[i]);
-    // }
 
     // parse a.csv
     row = 0;
@@ -149,7 +142,6 @@ int main()
         while((token2 = strtok_r(rest2, ",", &rest2)))
         {
             matrix_a[row][col] = atoi(token2);
-            // printf("%d\r\n", matrix_a[row][col]);
             col++;
         }
         row++;
@@ -165,12 +157,6 @@ int main()
 		ReceivedCount += XUartPs_Recv(&Uart_PS, &b_csv[ReceivedCount], B_CSV_SIZE - ReceivedCount);
     }
     
-    // for (size_t i=0; i<B_CSV_SIZE; i++)
-    // {
-    //     printf("char: %c\r\n", b_csv[i]);
-    //     printf("int: %d\r\n", b_csv[i]);
-    // }
-
     printf("Finish receiving B.csv\r\n");
 
     // parse b.csv
@@ -179,11 +165,11 @@ int main()
     while((token1 = strtok_r(rest1, "\r", &rest1)))
     {
         matrix_b[row] = atoi(token1);
-        // printf("%d\r\n", matrix_b[row]);
         row++;
     }
+    /* ===========================================read and parse csv end=========================================== */
 
-    // start computation
+    /* ===========================================computation start=========================================== */
 	start_time = XTmrCtr_GetValue(TmrCtrInstancePtr, TIMER_COUNTER_0);
     XTmrCtr_Start(TmrCtrInstancePtr, TIMER_COUNTER_0);
 
@@ -197,8 +183,8 @@ int main()
         matrix_r[i] /= 256;
     }
 
-    // end of computation
 	end_time = XTmrCtr_GetValue(TmrCtrInstancePtr, TIMER_COUNTER_0);
+    /* ===========================================computation end=========================================== */
     
     computation_time = end_time - start_time;
     printf("computation_time: %d\r\n", computation_time);
